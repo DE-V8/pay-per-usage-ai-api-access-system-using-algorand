@@ -224,6 +224,34 @@ export default function HowItWorks() {
                   payout delays.
                 </p>
               </div>
+
+              <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-indigo-600">query_stats</span>
+                  </div>
+                  <h4 className="font-semibold text-slate-900 text-[16px]">On-Chain Telemetry</h4>
+                </div>
+                <p className="text-[14px] text-slate-600 leading-relaxed">
+                  Real-time blockchain statistics and transaction auditing directly via our dashboard. 
+                  Sentinel queries indexers to track total transaction counts, aggregate microALGO processing, 
+                  and display live verified transaction activity logs.
+                </p>
+              </div>
+
+              <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-indigo-600">terminal</span>
+                  </div>
+                  <h4 className="font-semibold text-slate-900 text-[16px]">Sentinel CLI</h4>
+                </div>
+                <p className="text-[14px] text-slate-600 leading-relaxed">
+                  A local terminal command line utility. Developers can compile and deploy contract binaries, 
+                  query any address's ALGO and minimum balance parameters, and start chronological on-chain 
+                  transaction logs monitoring streams locally.
+                </p>
+              </div>
             </div>
           </section>
 

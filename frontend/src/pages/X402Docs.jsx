@@ -173,6 +173,25 @@ export default function X402Docs() {
             </ul>
           </section>
 
+          {/* Section: Workflows & Telemetry */}
+          <section>
+            <h2 id="workflows-telemetry" className="text-2xl font-bold tracking-tight text-slate-900 mb-4 border-b border-slate-100 pb-2">Visual AI Workflows & On-Chain Telemetry</h2>
+            <p className="text-[14px] text-slate-600 mb-4 leading-relaxed font-body">
+              Sentinel integrates x402-style billing constraints directly with visual agent DAGs and provides comprehensive transparency tools:
+            </p>
+            <ul className="space-y-4 text-[14px] text-slate-700 leading-relaxed list-disc pl-5 font-body">
+              <li>
+                <strong>Automatic Cost Estimation:</strong> Sentinel estimates the required ALGO for the entire topological execution path of your workspace nodes prior to launch.
+              </li>
+              <li>
+                <strong>On-Chain verifyAndCharge:</strong> Runs a multi-checkpoint verification sequence on incoming transactions to defend against double-spending and ensure note format references match.
+              </li>
+              <li>
+                <strong>State Telemetry Registry:</strong> User and creator dashboards connect directly to on-chain indexer nodes via `/dashboard/contract` to audit App ID statistics and stream recent verified payments.
+              </li>
+            </ul>
+          </section>
+
           {/* Section: Security */}
           <section>
             <h2 id="security" className="text-2xl font-bold tracking-tight text-slate-900 mb-4 border-b border-slate-100 pb-2">Trust, Sandboxing & Security</h2>
@@ -283,6 +302,11 @@ async execute(this: IExecuteFunctions) {
             <li>
               <a href="#creators" onClick={(e) => handleClick(e, 'creators')} className={navLinkClass("creators")}>
                 Creator Monetization
+              </a>
+            </li>
+            <li>
+              <a href="#workflows-telemetry" onClick={(e) => handleClick(e, 'workflows-telemetry')} className={navLinkClass("workflows-telemetry")}>
+                Workflows & Telemetry
               </a>
             </li>
             <li>

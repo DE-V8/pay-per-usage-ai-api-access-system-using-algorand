@@ -180,7 +180,7 @@ export default function WithdrawalDocs() {
 async function requestPayout(jwtToken, amount) {
   try {
     const { data } = await axios.post(
-      "http://localhost:5000/api/creator/withdraw",
+      "http://localhost:5001/api/creator/withdraw",
       { amount },
       {
         headers: {
