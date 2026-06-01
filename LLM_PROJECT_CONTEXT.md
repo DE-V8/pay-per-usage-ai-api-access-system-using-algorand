@@ -43,6 +43,14 @@ pay-per-usage-ai-api-access-system-using-algorand/
 │   │   └── utils/
 │   │       ├── encrypt.js             # AES key derivation & crypt
 │   │       └── userWallet.js          # Wallet address canonicalizer
+├── cli/                               # Sentinel CLI Tool package
+│   ├── package.json
+│   ├── bin/
+│   │   └── sentinal.js             # CLI entry point
+│   └── src/
+│       ├── deploy.js               # deploy command
+│       ├── balance.js              # balance command
+│       └── monitor.js              # monitor command
 ├── frontend/                          # Vite + React 18 + Tailwind SPA
 │   ├── vite.config.js                 # Dev server proxy & Node polyfills
 │   └── src/
@@ -198,7 +206,7 @@ class SentinelContract(ARC4Contract):
 
 ## 6. Endpoints Reference
 
-### Main Backend (`:5000`)
+### Main Backend (`:5001`)
 * **Auth:**
   * `POST /api/auth/login`: Wallet-based JWT login. Returns `{ token, user }`.
 * **Services:**
@@ -215,6 +223,9 @@ class SentinelContract(ARC4Contract):
   * `POST /api/access/generate`: Issue/Retrieve key for user.
 * **Prediction:**
   * `GET /api/prediction/usage`: Spend forecasts (Ordinary Least Squares or Weighted Moving Average).
+* **Contract Telemetry:**
+  * `GET /api/contract/stats`: On-chain global contract statistics (cached 20s).
+  * `GET /api/contract/activity`: Recent verified on-chain contract telemetry logs feed.
 * **Burner Profile:**
   * `GET /api/profile/burner`: Fetch decrypted burner wallet mnemonic.
   * `POST /api/profile/burner`: Encrypt and save burner mnemonic.
@@ -234,6 +245,7 @@ class SentinelContract(ARC4Contract):
 * **Address Canonicalization:** Prevents duplication due to alternate uppercase/lowercase or spacing variants by executing a roundtrip: `encodeAddress(decodeAddress(addr))` inside the login/utility scripts.
 * **Payment Tolerance:** A ±1% validation window is applied to the difference between backend quote charges and verified on-chain transactions to handle minor division/rounding differences.
 * **Timeout Guards:** Cached AI outputs expire in 60 seconds if payment verification isn't finalized to prevent memory leakages.
+* **Visual Workflow Payment Validation:** Workflow execution requests must provide `paymentProof` verified on-chain by `verifyAndCharge`. Steps include double-spend replay check in `WorkflowRun`, indexer confirmation lookup, transaction type validation, recipient verification, note reference checks (`workflow:${workflowId}`), amount match validation (within 1% tolerance), and transaction sender authentication.
 
 ---
 

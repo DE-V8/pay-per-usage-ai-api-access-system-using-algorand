@@ -51,21 +51,30 @@ export default function CliDocs() {
 
         <div className="space-y-12 text-slate-800">
           <section>
-            <h2 id="installation" className="text-2xl font-bold tracking-tight text-slate-900 mb-4 border-b border-slate-100 pb-2">Installation</h2>
+            <h2 id="installation" className="text-2xl font-bold tracking-tight text-slate-900 mb-4 border-b border-slate-100 pb-2">Installation & Setup</h2>
             
-            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs leading-relaxed">
+            <div className="mb-6 p-4 bg-indigo-50 border border-indigo-200 text-indigo-900 rounded-xl text-xs leading-relaxed">
               <div className="font-semibold mb-1 flex items-center gap-1">
                 <span className="material-symbols-outlined text-[16px]">info</span>
-                Private Preview Status
+                Local Repository Package
               </div>
-              The global CLI package <code>@sentinalapi/cli</code> is currently in private preview and is not yet published to the public npm registry. To deploy or interact with the smart contract, please use the local Python deployment scripts in <code>/contract</code> or integrate the JS/TS SDK in the <code>/sdk</code> folder.
+              The CLI tool package is located in the <code>/cli</code> folder of the repository. You can easily build and link it locally to make the global <code>sentinal</code> command available, or run commands directly using <code>npx sentinal</code>.
             </div>
 
             <p className="text-[14px] text-slate-600 mb-4 leading-relaxed">
-              Install the CLI globally using npm or yarn once released:
+              To install dependencies and link the command line utility globally on your machine:
             </p>
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-[13px] text-slate-800">
-              npm install -g @sentinalapi/cli
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-[13px] text-slate-800 space-y-1 mb-6">
+              <div>cd cli</div>
+              <div>npm install</div>
+              <div>npm link</div>
+            </div>
+
+            <p className="text-[14px] text-slate-600 mb-4 leading-relaxed">
+              Verify your installation is successful by running:
+            </p>
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-[13px] text-slate-800 mb-8">
+              sentinal --help
             </div>
           </section>
 
@@ -98,9 +107,29 @@ export default function CliDocs() {
                   Listen to real-time machine-to-machine transactions and on-chain payouts.
                 </p>
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 font-mono text-[13px] text-slate-800">
-                  sentinal monitor --app-id 1081
+                  sentinal monitor --app-id 763786783
                 </div>
               </div>
+            </div>
+
+            <div className="mt-8 bg-slate-950 text-slate-200 rounded-xl p-5 border border-slate-900 font-mono text-xs overflow-x-auto">
+              <div className="text-[#FF66CC] font-bold whitespace-pre">
+{`  .--.--.                            ___                                      ,--,    
+ /  /    '.                        ,--.'|_    ,--,                          ,--.'|    
+|  :  /\\\`. /                ,---,   |  | :,' ,--.'|         ,---,            |  | :    
+;  |  |--\`             ,-+-. /  |  :  : ' : |  |,      ,-+-. /  |           :  : '    
+|  :  ;_       ,---.  ,--.'|'   |.;__,'  /  \`--'_     ,--.'|'   |  ,--.--.  |  ' |    
+ \\  \\    \`.   /     \\|   |  ,"' ||  |   |   ,' ,'|   |   |  ,"' | /       \\ '  | |    
+  \`----.   \\ /    /  |   | /  | |:__,'| :   '  | |   |   | /  | |.--.  .-. ||  | :    
+  __ \\  \\  |.    ' / |   | |  | |  '  : |__ |  | :   |   | |  | | \\__\\/: . .'  : |__  
+ /  /\`--'  /'   ;   /|   | |  |/   |  | '.'|'  : |__ |   | |  |/  ," .--.; ||  | '.'| 
+'--'.     / '   |  / |   | |--'    ;  :    ;|  | '.'||   | |--'  /  /  ,.  |;  :    ; 
+  \`--'---'  |   :    |   |/        |  ,   / ;  :    ;|   |/     ;  :   .'   \\  ,   /  
+             \\   \\  /'---'          ---\`-'  |  ,   / '---'      |  ,     .-./---\`-'   
+              \`----'                         ---\`-'              \`--\`---'             `}
+              </div>
+              <div className="text-emerald-500 mt-2">     On-Chain Pay-Per-Use AI Gateway Protocol</div>
+              <div className="text-slate-500">     Algorand TestNet App ID: 763786783</div>
             </div>
           </section>
 

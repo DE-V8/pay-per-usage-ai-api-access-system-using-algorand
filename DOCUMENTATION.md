@@ -44,12 +44,15 @@
    - [Direct Payment & Access Token Flow](#86-direct-payment--access-token-flow)
    - [Top-Up (Contract) Flow](#87-top-up-contract-flow)
    - [Proof-of-Intelligence Flow](#88-proof-of-intelligence-flow)
-9. [Agent Context JSON](#10-agent-context-json)
-11. [x402 Payment Protocol (Roadmap)](#11-x402-payment-protocol-roadmap)
-12. [Environment Variables Reference](#12-environment-variables-reference)
-13. [API Reference (All Endpoints)](#13-api-reference-all-endpoints)
-14. [Security Mechanisms](#14-security-mechanisms)
-15. [Prediction & Analytics Engine](#15-prediction--analytics-engine)
+9. [Agent Context JSON](#9-agent-context-json)
+10. [x402 Payment Protocol](#10-x402-payment-protocol)
+11. [Environment Variables Reference](#11-environment-variables-reference)
+12. [API Reference (All Endpoints)](#12-api-reference-all-endpoints)
+13. [Security Mechanisms](#13-security-mechanisms)
+14. [Prediction & Analytics Engine](#14-prediction-&-analytics-engine)
+15. [Sentinel CLI Tool](#15-sentinel-cli-tool)
+16. [Visual AI Workflow Payment Verification](#16-visual-ai-workflow-payment-verification)
+17. [On-Chain Dashboard Registry & Telemetry](#17-on-chain-dashboard-registry-&-telemetry)
 
 ---
 
@@ -89,10 +92,10 @@ Sentinel is a **decentralized pay-per-use AI API marketplace** built on the **Al
 │  Dashboard (Agent Context JSON panel)                                │
 │  Studio (blog, projects, platforms)                                │
 └────────────────────────────┬─────────────────────────────────────────┘
-                             │ Vite Proxy /api → :5000
+                             │ Vite Proxy /api → :5001
                              ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│  MAIN BACKEND (:5000) — Express + MongoDB                            │
+│  MAIN BACKEND (:5001) — Express + MongoDB                            │
 │  /api/auth · /api/services · /api/use · /api/profile/burner          │
 │  /api/access · /api/payment · /api/creator · /api/studio             │
 └────────────────────────────┬─────────────────────────────────────────┘
@@ -190,6 +193,20 @@ pay-per-usage-ai-api-access-system-using-algorand/
 │           ├── ContractStats.jsx      # Displays on-chain contract statistics
 │           ├── UserLiveWalletBar.jsx  # Live ALGO balance bar for users
 │           └── ErrorBoundary.jsx      # React error boundary wrapper
+│
+├── cli/                               # Sentinel CLI Tool package
+│   ├── package.json
+│   ├── bin/
+│   │   └── sentinal.js             # CLI entry point
+│   └── src/
+│       ├── deploy.js               # deploy command
+│       ├── balance.js              # balance command
+│       └── monitor.js              # monitor command
+│
+├── sdk/                               # Sentinel Developer SDK package
+│   ├── package.json
+│   └── src/
+│       └── index.ts                # Main SDK entry point
 │
 └── contract/                          # Algorand smart contract (Puya/algopy)
     ├── sentinel_contract.py           # Smart contract source code
@@ -813,7 +830,7 @@ This endpoint returns a **live, machine-readable JSON document** describing ever
   "version": "1.0",
   "generated_at": "<ISO timestamp — always live>",
   "network": "algorand-testnet",
-  "base_url": "http://localhost:5000",
+  "base_url": "http://localhost:5001",
   "description": "...",
   "instructions_for_ai_agent": "Compare services by model, provider, pricing...",
   "total_active_services": 9,
@@ -855,9 +872,9 @@ This endpoint returns a **live, machine-readable JSON document** describing ever
 
 ---
 
-## 11. x402 Payment Protocol (Roadmap)
+## 11. x402 Payment Protocol
 
-> **Status: Planned — not yet in production. The analysis and integration design is complete.**
+> **Status: Fully Implemented at `/api/x402` (packages `@x402/core`, `@x402/avm`).**
 
 The [x402 protocol](https://x402.org) is an open standard that repurposes HTTP `402 Payment Required` to create a universal machine-readable payment challenge for AI agents.
 
@@ -870,7 +887,7 @@ The [x402 protocol](https://x402.org) is an open standard that repurposes HTTP `
 | 3 | `POST /api/use` with `txId` → claim | `@x402/fetch` auto-constructs + signs Algorand txn |
 | 4 | AI response returned | Client retries with `X-PAYMENT` header → server verifies → 200 + resource |
 
-### Planned endpoint
+### Implemented endpoint
 
 `POST /api/x402/use/:serviceId` — a parallel route wrapping existing services with `ExactAvmScheme` middleware from `@x402/avm`. The existing `/api/use` two-step flow remains unchanged.
 
@@ -895,7 +912,7 @@ const avmSigner = toClientAvmSigner(secretKeyB64);
 
 ### Pricing note
 
-x402's `ExactAvmScheme` uses a **fixed amount** set at the 402 response time. Sentinel's per-token dynamic pricing is incompatible with a single-round-trip x402 call. The planned x402 endpoint will use `minimumChargeAlgo` as a fixed price per call.
+x402's `ExactAvmScheme` uses a **fixed amount** set at the 402 response time. Sentinel's per-token dynamic pricing is incompatible with a single-round-trip x402 call. The x402 endpoint uses `minimumChargeAlgo` as a fixed price per call.
 
 ---
 
@@ -908,7 +925,7 @@ x402's `ExactAvmScheme` uses a **fixed amount** set at the 402 response time. Se
 | `MONGO_URI` / `MONGODB_URI` | ✅ | MongoDB connection string. |
 | `JWT_SECRET` | ✅ | Secret for signing JWTs. Must be long and random. |
 | `ENCRYPTION_KEY` | ✅ | Key for AES-256-GCM encryption of provider API keys. Exactly 32 characters recommended. |
-| `PORT` | ❌ | Server port (default: 5000). |
+| `PORT` | ❌ | Server port (default: 5001). |
 | `FRONTEND_URL` / `FRONTEND_ORIGIN` | ❌ | CORS origin (default: `http://localhost:5173`). |
 | `NODE_ENV` | ❌ | `"development"` to expose error details. |
 | `ALGORAND_NODE` / `ALGOD_SERVER` | ❌ | Algorand Algod URL (default: `https://testnet-api.algonode.cloud`). |
@@ -935,7 +952,7 @@ x402's `ExactAvmScheme` uses a **fixed amount** set at the 402 response time. Se
 
 ---
 
-## 10. API Reference (All Endpoints)
+## 13. API Reference (All Endpoints)
 
 | Method | Endpoint | Auth | Role | Description |
 |--------|----------|------|------|-------------|
@@ -963,6 +980,7 @@ x402's `ExactAvmScheme` uses a **fixed amount** set at the 402 response time. Se
 | `POST` | `/api/wallet/topup/create` | ✅ | `user` | Create top-up intent |
 | `POST` | `/api/wallet/topup/verify` | ✅ | `user` | Verify top-up payment |
 | `GET` | `/api/contract/stats` | ❌ | — | On-chain contract stats |
+| `GET` | `/api/contract/activity` | ❌ | — | Returns recent verified on-chain contract telemetry logs |
 | `GET` | `/api/prediction/usage` | ❌ | — | Spending prediction |
 | `GET` | `/api/prediction/history` | ❌ | — | Raw monthly history |
 | `GET` | `/api/profile/burner` | ✅ | any | Retrieve encrypted burner mnemonic (new) |
@@ -1037,4 +1055,97 @@ The prediction system provides AI-based usage forecasting. It aggregates transac
 
 ---
 
-*Last updated: May 2026. Reflects Pera wallet auth, burner wallet sync, Agent Context JSON endpoint, and x402 roadmap.*
+*Last updated: June 2026. Reflects Pera wallet auth, burner wallet sync, Agent Context JSON endpoint, Sentinel CLI tool, and visual workflow payment validation.*
+
+---
+
+## 16. Sentinel CLI Tool
+
+The `@sentinalapi/cli` local package allows developers to manage Sentinel contract deployments, query account balances, and stream transaction logs directly from their command line.
+
+### Command Guide
+
+#### `sentinal deploy`
+Deploys a new `SentinelContract` instance on-chain.
+- **Parameters:**
+  - `-n, --network <network>`: Target network (`testnet` or `mainnet`, default: `testnet`).
+  - `-m, --mnemonic <mnemonic>`: Secret 25-word mnemonic phrase of the deployment account.
+- **Actions:**
+  1. Compiles the local TEAL approval and clear contracts on-chain via the Algod client.
+  2. Submits an ARC-4 application creation transaction specifying the minimum payment limits.
+  3. Polls the network until confirmation and outputs the generated App ID and application address.
+  4. Saves the results locally into `contract_info.json`.
+
+#### `sentinal balance`
+Checks the current native and minimum balances of any Algorand address.
+- **Parameters:**
+  - `-a, --address <address>`: Valid Algorand public address.
+  - `-n, --network <network>`: Target network (default: `testnet`).
+- **Actions:**
+  1. Queries the Algod client for account details of the given public address.
+  2. Computes and displays the balance in ALGO (divides microAlgos by 1,000,000).
+  3. Displays the minimum account balance (in ALGO) required to hold assets on-chain.
+
+#### `sentinal monitor`
+Starts a real-time monitor listening to on-chain transaction events.
+- **Parameters:**
+  - `-i, --app-id <appId>`: Target Sentinel contract application ID.
+  - `-n, --network <network>`: Target network (default: `testnet`).
+- **Actions:**
+  1. Queries the Indexer node client using `indexer.searchForTransactions().applicationID(appId)`.
+  2. Sorts historic transactions chronologically.
+  3. Establishes a 10-second polling interval to capture new incoming verified payments.
+  4. Formats block number, round time, sender address, and transaction note payloads on the terminal.
+
+---
+
+## 17. Visual AI Workflow Payment Verification
+
+Sentinel enforces robust verification for visual workflow runs through the `verifyAndCharge` service function. This protects the platform and creators from unauthorized AI execution:
+
+```mermaid
+flowchart TD
+    A[Start Verification] --> B{Replay Check?}
+    B -- Already Used --> C[Fail: Replay Detected]
+    B -- New Tx --> D[Fetch Tx from Indexer]
+    D -- Indexer Failure --> E[Fail: Connection Error]
+    D -- Tx Found --> F{Type Pay Tx?}
+    F -- No --> G[Fail: Invalid Tx Type]
+    F -- Yes --> H{Receiver Address Matches?}
+    H -- No --> I[Fail: Recipient Mismatch]
+    H -- Yes --> J{Note matches workflow:id?}
+    J -- No --> K[Fail: Note Mismatch]
+    J -- Yes --> L{Amount within 1% tolerance?}
+    L -- No --> M[Fail: Amount Mismatch]
+    L -- Yes --> N{Sender matches User/Burner Wallet?}
+    N -- No --> O[Fail: Sender Mismatch]
+    N -- Yes --> P[Success: Approve Workflow Run]
+```
+
+### Verification Checklist Details
+
+1. **Replay Check**: Queries both the `WorkflowRun` database collection (checking `txHash`) and the `ApiUsageLog` collection (checking `paymentTxId`). If the transaction ID has been used before, it rejects the request immediately.
+2. **On-Chain Lookup**: Polls the Algorand Indexer using a retry wrapper (`lookupConfirmedTransactionOnIndexer`) up to 10 times to handle network lag.
+3. **Transaction Structure Check**: Validates that the transaction type is a standard `pay` transaction rather than an asset transfer or application call.
+4. **Recipient Validation**: Ensures the transaction receiver matches the configured platform treasury or contract address.
+5. **Note / Reference Check**: Decodes the transaction note and asserts that it matches `workflow:${workflowId}` exactly.
+6. **Amount Validation**: Validates the transferred microAlgos match the estimated workflow cost with a 1% floating tolerance limit to avoid rejection due to minor rounding differences.
+7. **Signer Validation**: Ensures that the sending address matches either the user's primary linked wallet address or the public key of the decrypted burner wallet.
+
+---
+
+## 18. On-Chain Dashboard Telemetry
+
+The smart contract registry and transaction telemetry dashboard provides a live portal for ledger audits at `/dashboard/contract`.
+
+### Architecture & Endpoints
+
+- **Backend Endpoint (`GET /api/contract/activity`)**:
+  - Pulls the last 50 successful `ApiUsageLog` records from MongoDB.
+  - Formats user addresses (partially masked for user privacy).
+  - Appends explorer URLs for both the payment transaction and the proof-of-intelligence attestation.
+- **Frontend Page (`OnChainContract.jsx`)**:
+  - Features real-time state statistics card (`ContractStats.jsx`) displaying `min_payment`, `total_purchases`, and `total_algo_received`.
+  - Feeds transactions into a clean tabular log displaying User Wallet, Service Title, ALGO Charge, Verified Proof links, and Timestamp.
+  - Automatically updates the telemetry lists every 15 seconds to ensure real-time updates.
+

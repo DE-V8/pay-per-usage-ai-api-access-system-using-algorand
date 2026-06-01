@@ -36,6 +36,8 @@
 15. [Git workflow and commits](#15-git-workflow-and-commits)
 16. [Further reading](#16-further-reading)
 17. [Agentic Pipeline & multimodal workflows (detailed)](#17-agentic-pipeline--multimodal-workflows-detailed)
+18. [Sentinel CLI Tool](#18-sentinel-cli-tool)
+19. [On-Chain Dashboard Registry & Telemetry](#19-on-chain-dashboard-registry--telemetry)
 
 ---
 
@@ -46,6 +48,7 @@
 | **`frontend/`** | Vite + React 18 + Tailwind. **Marketplace** (`/dashboard/*`) for API discovery, keys, usage, billing. **Studio** (`/studio/*`) for blogging, **Workflow Studio** (DAG builder + agentic nodes), **Agentic Pipeline** (7-phase multimodal builder), ClipCraft, **Advanced Prompt Generator**, AI chat (x402), analytics. **Docs** (`/docs/*`) for x402 and How It Works. |
 | **`backend/`** | Express API, MongoDB, JWT auth, Algorand helpers, AI proxy, **x402** routes, **Studio** (Groq blogs, Gemini prompts, **agentic orchestrator**, **workflow executor**, GCS asset uploads, ClipCraft, subscriptions), BullMQ publishing worker. |
 | **`contract/`** | Puya / **algopy** smart contract (`SentinelContract`) + deploy script + `artifacts/`. |
+| **`cli/`** | Official Command Line Interface package (`@sentinalapi/cli`) to deploy contract, query balance, and monitor transactions locally. |
 | **`sdk/`** | Official JavaScript/TypeScript SDK package published on npm as `@sentinalapi/sdk`. Simplifies payments integration. |
 
 **Ecosystem split (product):**
@@ -130,6 +133,14 @@ pay-per-usage-ai-api-access-system-using-algorand/
 │       ├── studio/clipcraft/     ← ClipCraft (optional CLIPCRAFT_ENABLED)
 │       ├── outputs/              ← pipeline/ + workflow/ static assets (gitignored)
 │       └── utils/                ← pcmToWav.js, vertexAuth.js, scriptSceneParser.js
+├── cli/                        ← Sentinel CLI Tool package
+│   ├── package.json
+│   ├── bin/
+│   │   └── sentinal.js         ← CLI entry point
+│   └── src/
+│       ├── deploy.js           ← deploy command
+│       ├── balance.js          ← balance command
+│       └── monitor.js          ← monitor command
 ├── frontend/
 │   ├── package.json
 │   ├── vite.config.js          ← proxies /api and /outputs → backend
@@ -268,7 +279,7 @@ git clone https://github.com/lathi-aayush/pay-per-usage-ai-api-access-system-usi
 cd pay-per-usage-ai-api-access-system-using-algorand
 ```
 
-**Backend** (default port **5000**; use **5001** if 5000 is busy — match Vite proxy)
+**Backend** (default port **5001**; match Vite proxy)
 
 ```bash
 cd backend
@@ -276,7 +287,7 @@ npm install
 cp .env.example .env
 # Set MONGO_URI, JWT_SECRET, ENCRYPTION_KEY, GROQ_API_KEY, GOOGLE_API_KEY, RECEIVER_WALLET, …
 npm run dev
-curl http://localhost:5000/api/health
+curl http://localhost:5001/api/health
 ```
 
 **Frontend**
@@ -322,7 +333,7 @@ python deploy.py
 
 | Variable | Purpose |
 |----------|---------|
-| `PORT` | API port (default `5000`) |
+| `PORT` | API port (default `5001`) |
 | `MONGO_URI` / `MONGODB_URI` | MongoDB |
 | `JWT_SECRET` | Session JWTs |
 | `ENCRYPTION_KEY` | AES-GCM (32 chars) — burner wallet, provider keys |
@@ -847,3 +858,49 @@ cd frontend && npm run dev   # proxies /api and /outputs
 - **`DOCUMENTATION.md`** — broader API reference  
 - **`backend/.env.example`** — all env flags (Agentic + GCS + Vertex block at bottom)  
 - **`LLM_PROJECT_CONTEXT.md`** — condensed context for AI assistants  
+
+---
+
+## 17. Sentinel CLI Tool
+
+Sentinel provides an official local developer CLI package (`@sentinalapi/cli`) under `/cli` to facilitate blockchain actions, contract deployments, and log streaming directly from your local shell.
+
+### Installation & Execution
+```bash
+# Navigate to the CLI directory
+cd cli
+npm install
+
+# Link it locally to register the global `sentinal` binary
+npm link
+```
+Now, you can execute the CLI commands anywhere on your system via:
+```bash
+sentinal <command> [options]
+# or via npx without linking:
+npx sentinal <command> [options]
+```
+
+### CLI Command Reference
+- **`deploy`**: Compile local contract TEAL programs, create the ARC-4 application instance on-chain, and output the deployed App ID and Contract Address.
+  ```bash
+  sentinal deploy --network testnet --mnemonic "your 25-word mnemonic phrase..."
+  ```
+- **`balance`**: Fetch account balance and minimum on-chain balance for a wallet address.
+  ```bash
+  sentinal balance --address "YOUR_ALGORAND_ADDRESS" --network testnet
+  ```
+- **`monitor`**: Listen for real-time transaction event logs of a specific Sentinel application ID, outputting confirmed block round numbers, sender addresses, and payment note payloads.
+  ```bash
+  sentinal monitor --app-id 763786783 --network testnet
+  ```
+
+---
+
+## 18. On-Chain Dashboard Registry & Telemetry
+
+To ensure total transparency, Sentinel includes a live smart contract registry page on the dashboard (`/dashboard/contract`). This page provides:
+1. **App State Parameters**: Real-time stats fetched directly from the blockchain (total transaction count, total microAlgos received by the platform, and minimum payment parameters).
+2. **Verified Blockchain Activity Feed**: A table listing recent payments confirmed on-chain. It includes user wallet addresses (masked for privacy), service requested, ALGO charge amount, and links to payment/proof transactions on the block explorer.
+3. **Automatic Refresh**: Telemetry logs poll every 15 seconds to stream the newest transactions on the Algorand network.
+
